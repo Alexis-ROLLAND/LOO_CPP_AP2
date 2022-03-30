@@ -6,9 +6,9 @@
 #include <vector>
 #include <cmath>
 
-constexpr	float 	pi=3.14159265;
+constexpr	float 			pi=3.14159265;			
 constexpr	unsigned int	defaultNbPoints = 100;
-constexpr	float 	defaulttStop = 1;
+constexpr	float 			defaulttStop = 1;
 
 class Sinus{
 	private:
