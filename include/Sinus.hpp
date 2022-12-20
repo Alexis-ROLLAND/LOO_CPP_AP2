@@ -62,9 +62,6 @@ class Sinus{
 	// Generate function
 	int		Generate(std::string FileName="sinus.data")const;
 		
-		
-		
-		
 };
 #endif
 
