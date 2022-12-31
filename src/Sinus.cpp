@@ -8,13 +8,13 @@ Sinus::Sinus(float A0, float Amplitude, float Omega, float Phi0, float tStop, un
 	while(this->Phi0 > (2*pi)) this->Phi0 -= (2*pi); 	// Phi0 ramenée, si nécessaire dans [0;2PI] 
 }
 //----------------------------------------------------------------------
-void	Sinus::setPhi0(float Phi0){
+void	Sinus::setPhi0(float Phi0) noexcept {
 	
 	this->Phi0 = Phi0;
 	while(this->Phi0 > (2*pi)) this->Phi0 -= (2*pi); 	// Phi0 ramenée, si nécessaire dans [0;2PI] 
 }
 //----------------------------------------------------------------------
-void	Sinus::Refresh_dt()const{
+void	Sinus::Refresh_dt()const  noexcept {
 	
 	if (tStop <= 0) tStop = defaulttStop;	// Reset tStop to 1 in case of wrong/bad value
 	if (NbPoints == 0) NbPoints = defaultNbPoints;	// Reset NbPoints to 100 in case of wrong/bad value
