@@ -1,27 +1,20 @@
 
 #include "Sinus.hpp"
 
-//----------------------------------------------------------------------
-Sinus::Sinus(float A0, float Amplitude, float Omega, float Phi0, float tStop, unsigned int NbPoints):A0{A0},Amplitude{Amplitude},Omega{Omega},Phi0{Phi0},tStop{tStop},NbPoints{NbPoints}{
+void	Sinus::settStart(float _tStart){
+	if (_tStart < 0) throw std::domain_error("tStart can't be negative.");
+	if (_tStart >= this->gettStop() ) throw std::overflow_error("tStart can’t be greater or equal than tStop.");
 	
-	Refresh_dt();
-	while(this->Phi0 > (2*pi)) this->Phi0 -= (2*pi); 	// Phi0 ramenée, si nécessaire dans [0;2PI] 
+	this->tStart = _tStart;
+}
+
+void	Sinus::settStop(float _tStop){
+	if (_tStop <= 0) throw std::domain_error("tStop can’t be negative or null.");
+	if (_tStop <= this->gettStart()) throw std::underflow_error("tStop can’t be lesser than tStart.");
+	this->tStop = _tStop;
 }
 //----------------------------------------------------------------------
-void	Sinus::setPhi0(float Phi0) noexcept {
-	
-	this->Phi0 = Phi0;
-	while(this->Phi0 > (2*pi)) this->Phi0 -= (2*pi); 	// Phi0 ramenée, si nécessaire dans [0;2PI] 
-}
-//----------------------------------------------------------------------
-void	Sinus::Refresh_dt()const  noexcept {
-	
-	if (tStop <= 0) tStop = defaulttStop;	// Reset tStop to 1 in case of wrong/bad value
-	if (NbPoints == 0) NbPoints = defaultNbPoints;	// Reset NbPoints to 100 in case of wrong/bad value
-	
-	dt = (tStop - tStart)/NbPoints;
-}
-//----------------------------------------------------------------------
+/*
 int		Sinus::Compute()const{
 	float real_t;
 	float tmp;
@@ -45,7 +38,9 @@ int		Sinus::Compute()const{
 	
 	return 0;
 }
+*/
 //----------------------------------------------------------------------
+/*
 int	Sinus::Generate(std::string FileName)const{
 	if (Compute() != 0) return -1;	// Compute problem...
 	
@@ -69,4 +64,4 @@ int	Sinus::Generate(std::string FileName)const{
 	
 	return 0;
 }
-
+*/
