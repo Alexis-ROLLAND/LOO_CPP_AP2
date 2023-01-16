@@ -7,7 +7,7 @@
 
 #include "Sinus.hpp"
 
-TEST_CASE("testing the Sinus class : Default non const object and getters") {
+TEST_CASE("1 - Testing the Sinus class : Default non const object and getters") {
 	Sinus mySinus{};
 	
 	CHECK(mySinus.getA0() == doctest::Approx(defaultA0));
@@ -20,7 +20,7 @@ TEST_CASE("testing the Sinus class : Default non const object and getters") {
 }
 
 
-TEST_CASE("testing the Sinus class : Default non const object and setters") {
+TEST_CASE("2 - Testing the Sinus class : Default non const object and setters") {
 	Sinus mySinus{};
 	
 	// Setter for A0
@@ -89,7 +89,7 @@ TEST_CASE("testing the Sinus class : Default non const object and setters") {
 	CHECK_THROWS_WITH_AS(mySinus.setNbPoints(nbPoints),"nbPoints must be greater than 0.",std::invalid_argument);
 }
 
-TEST_CASE("testing the Sinus class : Default const object and getters") {
+TEST_CASE("3 - Testing the Sinus class : Default const object and getters") {
 	const Sinus mySinus{};
 	
 	CHECK(mySinus.getA0() == doctest::Approx(defaultA0));
@@ -99,6 +99,144 @@ TEST_CASE("testing the Sinus class : Default const object and getters") {
 	CHECK(mySinus.gettStart() == doctest::Approx(defaulttStart));
 	CHECK(mySinus.gettStop() == doctest::Approx(defaulttStop));
 	CHECK(mySinus.getNbPoints() == defaultNbPoints);	
+}
+
+TEST_CASE("4 - Testing the compute function global bahaviour (not the real algorithm) , within a compute helper class"){
+	
+	SinusParam	testSinusParam{defaultA0, defaultAmplitude, defaultOmega, defaultPhi0};
+	ComputeParameters	testSimulParams{defaulttStart, defaulttStop, defaultNbPoints};
+	std::vector<SignalPoint>	resSinus{};
+	
+	SinusComputeHelper	helper{};
+	
+	resSinus = helper.Compute(testSinusParam, testSimulParams);
+		
+	// Minimal tests here... Fell free to add some :) 
+	CHECK(resSinus.size() == defaultNbPoints);	// is the result vector the correct size ?
+	SignalPoint Point = resSinus.front();	// get first element of result vector
+	CHECK( Point.tn == doctest::Approx(testSimulParams.tStart));	// is the tn matching start time ?
+	
+	
+	const SinusComputeHelper	chelper{};
+	resSinus = chelper.Compute(testSinusParam, testSimulParams);
+		
+	// Minimal tests here... Fell free to add some :) 
+	CHECK(resSinus.size() == defaultNbPoints);	// is the result vector the correct size ?
+	Point = resSinus.front();	// get first element of result vector
+	CHECK( Point.tn == doctest::Approx(testSimulParams.tStart));	// is the tn matching start time ?
+	
+}
+
+TEST_CASE("5 - Testing the generate method - non const objects"){
+	Sinus mySinus{};
+	
+	std::string_view	FileName{defaultFileName};
+	std::filesystem::remove(FileName);
+	REQUIRE(std::filesystem::exists(FileName) == false);
+	unsigned int 		expectedSize{1850};
+	
+	mySinus.generate();
+	
+	std::filesystem::file_status fs =  std::filesystem::status(FileName);
+	CHECK(std::filesystem::exists(FileName));
+	CHECK(fs.type() == std::filesystem::file_type::regular );	// Possible use of td::filesystem::is_regular_file instead
+	CHECK(std::filesystem::file_size(FileName) == expectedSize);
+	
+	mySinus.setOmega(4*pi);
+	mySinus.setAmplitude(2);
+	FileName = "sinus2.data";
+	
+	mySinus.generate(FileName);
+	
+	fs =  std::filesystem::status(FileName);
+	CHECK(std::filesystem::exists(FileName));
+	CHECK(fs.type() == std::filesystem::file_type::regular );	// Possible use of td::filesystem::is_regular_file instead
+	CHECK(std::filesystem::file_size(FileName) == expectedSize);
+	
+}
+
+TEST_CASE("6 - Testing the parametrized Ctor"){
+	float	testA0{-0.5};
+	float 	testAmplitude{3.3};
+	float 	testOmega{6*pi};
+	float 	testPhi0{pi};
+	
+	float 	testtStart{0.5};
+	float 	testtStop{1.5};
+	unsigned  int	testNbPoints{200};
+	
+	SinusParam	testSinusParam{testA0, testAmplitude, testOmega, testPhi0};
+	ComputeParameters	testSimulParams{testtStart, testtStop, testNbPoints};
+	
+	SUBCASE("Good values - non const object"){
+		Sinus mySinus(testSinusParam, testSimulParams);
+		
+		CHECK(mySinus.getA0() == doctest::Approx(testA0));
+		CHECK(mySinus.getAmplitude() == doctest::Approx(testAmplitude));
+		CHECK(mySinus.getOmega() == doctest::Approx(testOmega));
+		CHECK(mySinus.getPhi0() == doctest::Approx(testPhi0));
+		CHECK(mySinus.gettStart() == doctest::Approx(testtStart));
+		CHECK(mySinus.gettStop() == doctest::Approx(testtStop));
+		CHECK(mySinus.getNbPoints() == testNbPoints);	
+	}
+	
+	SUBCASE("Good values - const object"){
+		const Sinus mySinus(testSinusParam, testSimulParams);
+		
+		CHECK(mySinus.getA0() == doctest::Approx(testA0));
+		CHECK(mySinus.getAmplitude() == doctest::Approx(testAmplitude));
+		CHECK(mySinus.getOmega() == doctest::Approx(testOmega));
+		CHECK(mySinus.getPhi0() == doctest::Approx(testPhi0));
+		CHECK(mySinus.gettStart() == doctest::Approx(testtStart));
+		CHECK(mySinus.gettStop() == doctest::Approx(testtStop));
+		CHECK(mySinus.getNbPoints() == testNbPoints);	
+	}
+	
+	SUBCASE("Bad value for Omega - const and non const object"){
+		testSinusParam.Omega = -testOmega;
+		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "Omega can’t be negative.", std::domain_error);	// ...check exception
+		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "Omega can’t be negative.", std::domain_error);	// ...check exception
+	}
+	
+	SUBCASE("Out of bounds value for Phi0 - const and non const object"){
+		testSinusParam.Phi0 = testPhi0 + 3*pi;
+		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "Initial phi0 can’t be outside bounds.", std::domain_error);	// ...check exception
+		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "Initial phi0 can’t be outside bounds.", std::domain_error);	// ...check exception
+	}
+	
+	SUBCASE("Bad values for tStart - const and non const object"){
+		testSimulParams.tStart = -testtStart;
+		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "tStart can't be negative.", std::domain_error);	// ...check exception
+		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "tStart can't be negative.", std::domain_error);	// ...check exception
+		
+		testSimulParams.tStart = testtStop + testtStart;
+		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "tStart can’t be greater or equal than tStop.",std::overflow_error);	// ...check exception
+		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "tStart can’t be greater or equal than tStop.",std::overflow_error);	// ...check exception
+		
+	}
+	
+	SUBCASE("Bad values for tStop - const and non const object"){
+		testSimulParams.tStop = -testtStop;
+		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "tStop can’t be negative or null.", std::domain_error);	// ...check exception
+		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "tStop can’t be negative or null.", std::domain_error);	// ...check exception
+		
+		testSimulParams.tStop = 0;
+		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "tStop can’t be negative or null.", std::domain_error);	// ...check exception
+		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "tStop can’t be negative or null.", std::domain_error);	// ...check exception
+		
+		testSimulParams.tStart = testtStop;	 
+		testSimulParams.tStop = testtStart;
+		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "tStart can’t be greater or equal than tStop.",std::overflow_error);	// ...check exception
+		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "tStart can’t be greater or equal than tStop.",std::overflow_error);	// ...check exception
+	}
+	
+	SUBCASE("Bad value nbPoints - const and non const object"){
+		testSimulParams.nbPoints = 0;
+		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "nbPoints must be greater than 0.",std::invalid_argument);	// ...check exception
+		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "nbPoints must be greater than 0.",std::invalid_argument);	// ...check exception
+	}
+	
+	
 }
 
 
