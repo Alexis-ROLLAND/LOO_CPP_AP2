@@ -1,4 +1,10 @@
-
+/**
+ *	@file	Sinus.cpp
+ * 	@brief 	Sinus class (standalone version) source file
+ * 	@author	
+ * 	@date	2023-09
+ * 
+ */
 #include "Sinus.hpp"
 
 //----------------------------------------------------------------------

@@ -2,7 +2,7 @@
  *	@file	Sinus.hpp
  * 	@brief 	Sinus class (standalone version) header file
  * 	@author	
- * 	@date	2023-01
+ * 	@date	2023-09
  * 
  */
 #ifndef __SINUS_H__
