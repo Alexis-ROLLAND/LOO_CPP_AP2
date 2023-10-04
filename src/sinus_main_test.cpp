@@ -77,7 +77,7 @@ TEST_CASE("2 - Testing the Sinus class : Default non const object and setters") 
 	
 	#ifdef	TEST22_SETTER_OMEGA
 	// Setter fo Omega
-	float 	Omega = 4*pi;
+	float 	Omega = 4*std::numbers::pi;
 	mySinus.setOmega(Omega);
 	CHECK(mySinus.getOmega() == doctest::Approx(Omega));
 	
@@ -87,15 +87,15 @@ TEST_CASE("2 - Testing the Sinus class : Default non const object and setters") 
 	
 	#ifdef	TEST23_SETTER_PHI0
 	// Setter for Phi0
-	float 	Phi0 = pi / 2;
+	float 	Phi0 = std::numbers::pi / 2;
 	mySinus.setPhi0(Phi0);
 	CHECK(mySinus.getPhi0() == doctest::Approx(Phi0));
 	
-	mySinus.setPhi0(Phi0 + 2*pi);	// if Phi0 > 2*pi...
+	mySinus.setPhi0(Phi0 + 2*std::numbers::pi);	// if Phi0 > 2*pi...
 	CHECK(mySinus.getPhi0() == doctest::Approx(Phi0)); // Check Phi0 is now < 2*pi
 	 
-	Phi0 = -pi/2;
-	mySinus.setPhi0(Phi0 - 2*pi);	// if Phi0 < -2*pi...
+	Phi0 = -std::numbers::pi/2;
+	mySinus.setPhi0(Phi0 - 2*std::numbers::pi);	// if Phi0 < -2*pi...
 	CHECK(mySinus.getPhi0() == doctest::Approx(Phi0));	// check Phi0 is now > -2*pi
 	#endif	/* TEST23_SETTER_PHI0 */
 	
@@ -205,7 +205,7 @@ TEST_CASE("5 - Testing the generate method - non const objects"){
 	#endif	/* TEST51_GENERATE_NON_CONST_DEFAULT_FILENAME	*/
 	
 	#ifdef	TEST52_GENERATE_NON_CONST_STD_FILENAME
-	mySinus.setOmega(4*pi);
+	mySinus.setOmega(4*std::numbers::pi);
 	mySinus.setAmplitude(2);
 	FileName = "sinus2.data";
 	
@@ -223,8 +223,8 @@ TEST_CASE("5 - Testing the generate method - non const objects"){
 TEST_CASE("6 - Testing the parametrized Ctor"){
 	float	testA0{-0.5};
 	float 	testAmplitude{3.3};
-	float 	testOmega{6*pi};
-	float 	testPhi0{pi};
+	float 	testOmega{6*std::numbers::pi};
+	float 	testPhi0{std::numbers::pi};
 	
 	float 	testtStart{0.5};
 	float 	testtStop{1.5};
@@ -272,7 +272,7 @@ TEST_CASE("6 - Testing the parametrized Ctor"){
 	
 	#ifdef	TEST64_PARAM_CTOR_BAD_PHI0
 	SUBCASE("Out of bounds value for Phi0 - const and non const object"){
-		testSinusParam.Phi0 = testPhi0 + 3*pi;
+		testSinusParam.Phi0 = testPhi0 + 3*std::numbers::pi;
 		CHECK_THROWS_WITH_AS(Sinus mySinus(testSinusParam, testSimulParams), "Initial phi0 can’t be outside bounds.", std::domain_error);	// ...check exception
 		CHECK_THROWS_WITH_AS(const Sinus mySinus(testSinusParam, testSimulParams), "Initial phi0 can’t be outside bounds.", std::domain_error);	// ...check exception
 	}

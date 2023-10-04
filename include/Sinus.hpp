@@ -12,16 +12,16 @@
 #include <fstream>
 #include <vector>
 #include <cmath>
+//#include <numbers>
 #include <filesystem>
 
 constexpr	unsigned int	defaultNbPoints = 100;	/**< Default number of points : 100	*/
 constexpr	float 			defaulttStart = 0;		/**< Default start time : 0 (sec)	*/
 constexpr	float 			defaulttStop = 1;		/**< Default stop time : 1 (sec)	*/
 
-constexpr	float 			pi=3.14159265;			/**< What to say ?... */	
 constexpr	float 			defaultA0 = 0;			/**< Default offset */
 constexpr	float 			defaultAmplitude = 1;	/**< Default amplitude */
-constexpr	float 			defaultOmega = (2*pi);	/**< Default angular frequency - makes a 1Hz Sine */
+constexpr	float 			defaultOmega = (2*std::numbers::pi);	/**< Default angular frequency - makes a 1Hz Sine */
 constexpr	float 			defaultPhi0 = 0;		/**< Default phase at t=0 */
 
 constexpr	std::string_view	defaultFileName{"sinus.data"};	/**< Default File name	 */
@@ -93,7 +93,7 @@ class Sinus{
 	 * Compute (private) method
 	 * 		links to the Compute public method of the helper 
 	 * 
-	 * const : callable with a const object  
+:	 * const : callable with a const object  
 	 * noexcept : this method throws no exception
 	 * 
 	 */
@@ -193,7 +193,7 @@ class Sinus{
 	 * @param[in]	_Phi0	Value of Phi0
 	 * noexcept : this method throws no exception
 	 */
-	void	setPhi0(float _Phi0) noexcept {this->Parameters.Phi0 = std::fmod(_Phi0 , (2*pi) );setNeedToRecompute(true);};
+	void	setPhi0(float _Phi0) noexcept {this->Parameters.Phi0 = std::fmod(_Phi0 , (2*std::numbers::pi) );setNeedToRecompute(true);};
 	
 	/**
 	 * getter (public) for the tStart parameter 
