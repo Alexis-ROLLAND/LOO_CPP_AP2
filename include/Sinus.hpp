@@ -12,7 +12,6 @@
 #include <fstream>
 #include <vector>
 #include <cmath>
-//#include <numbers>
 #include <filesystem>
 
 constexpr	unsigned int	defaultNbPoints = 100;	/**< Default number of points : 100	*/
